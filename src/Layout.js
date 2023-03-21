@@ -129,27 +129,40 @@ function Layout() {
             <button onClick={logOut}>Log out</button>
           </div>
         ) : (
-          <button onClick={() => login()}>Sign in with Google 🚀 </button>
+          <></>
         )}
 
         <aside>&nbsp;</aside>
       </header>
       <div id="main-container" ref={mainContainerRef}>
-        <aside id="sidebar" className={collapse ? "hidden" : null}>
-          <header>
-            <div id="notes-list-heading">
-              <h2>Notes</h2>
-              <button id="new-note-button" onClick={addNote}>
-                +
-              </button>
-            </div>
-          </header>
-          <div id="notes-holder">
-            <NoteList notes={notes} />
-          </div>
-        </aside>
+      {profile ? (
+         <aside id="sidebar" className={collapse ? "hidden" : null}>
+         <header>
+           <div id="notes-list-heading">
+             <h2>Notes</h2>
+             <button id="new-note-button" onClick={addNote}>
+               +
+             </button>
+           </div>
+         </header>
+         <div id="notes-holder">
+           <NoteList notes={notes} />
+         </div>
+       </aside>
+        ) : (
+          <></>
+        )}
+
         <div id="write-box">
-          <Outlet context={[notes, saveNote, deleteNote]} />
+        {profile ? (
+         <Outlet context={[notes, saveNote, deleteNote]} />
+        ) : (
+          
+          <div id="login-button-div"> 
+            <button id="login-button" onClick={() => login()}>Sign in with Google </button> 
+            </div>
+        )}
+          
         </div>
       </div>
     </div>
