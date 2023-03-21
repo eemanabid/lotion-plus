@@ -6,6 +6,7 @@ h4,
 h5,
 h6,
 li,
+
 p {
   margin: 0;
   padding: 0;
@@ -152,6 +153,25 @@ button:hover,
   font-size: 2em;
   color: gray;
 }
+
+#login-button {
+  border: 0.5px solid black;
+  padding: 15px;
+  height: 100%;
+  font-size: 2em;
+  color: black;
+}
+
+#login-button-div{
+  margin: auto;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 7px;
+  color: black;
+  border: 2px;
+}
+
 #write-box header {
   display: flex;
 }
