@@ -1,8 +1,11 @@
 import { useEffect, useRef, useState } from "react";
 import { Outlet, useNavigate, Link } from "react-router-dom";
 import NoteList from "./NoteList";
+import Empty from "./Empty";
 import { v4 as uuidv4 } from "uuid";
 import { currentDate } from "./utils";
+import { googleLogout, useGoogleLogin } from "@react-oauth/google";
+import axios from "axios";
 
 const localStorageKey = "lotion-v1";
 
@@ -13,6 +16,38 @@ function Layout() {
   const [notes, setNotes] = useState([]);
   const [editMode, setEditMode] = useState(false);
   const [currentNote, setCurrentNote] = useState(-1);
+  const [user, setUser] = useState([]);
+  const [profile, setProfile] = useState([]);
+
+  const login = useGoogleLogin({
+    onSuccess: (codeResponse) => setUser(codeResponse),
+    onError: (error) => console.log("Login Failed:", error),
+  });
+
+  useEffect(() => {
+    if (user) {
+      axios
+        .get(
+          `https://www.googleapis.com/oauth2/v1/userinfo?access_token=${user.access_token}`,
+          {
+            headers: {
+              Authorization: `Bearer ${user.access_token}`,
+              Accept: "application/json",
+            },
+          }
+        )
+        .then((res) => {
+          setProfile(res.data);
+        })
+        .catch((err) => console.log(err));
+    }
+  }, [user]);
+
+  // log out function to log the user out of google and set the profile array to null
+  const logOut = () => {
+    googleLogout();
+    setProfile(null);
+  };
 
   useEffect(() => {
     const height = mainContainerRef.current.offsetHeight;
@@ -87,6 +122,16 @@ function Layout() {
           </h1>
           <h6 id="app-moto">Like Notion, but worse.</h6>
         </div>
+
+        {profile ? (
+          <div>
+            <div>{profile.email}</div>
+            <button onClick={logOut}>Log out</button>
+          </div>
+        ) : (
+          <button onClick={() => login()}>Sign in with Google 🚀 </button>
+        )}
+
         <aside>&nbsp;</aside>
       </header>
       <div id="main-container" ref={mainContainerRef}>
