@@ -43,10 +43,10 @@ button {
   overflow: hidden;
 }
 #container > header {
-  border-top: 3px solid #4d455d;
+  border-top: 3px solid pink;
 }
 header h1 a:hover {
-  color: #4d455d;
+  color: pink;
 }
 header {
   display: flex;
@@ -63,7 +63,7 @@ header aside {
 }
 button:hover,
 .button:hover {
-  background-color: #4d455d;
+  background-color: pink;
   color: white;
 }
 #app-header {
@@ -123,7 +123,7 @@ button:hover,
 }
 .note-item a:hover,
 .note-item a.active {
-  background-color: #4d455d;
+  background-color: pink;
   color: white;
 }
 .note-when {
