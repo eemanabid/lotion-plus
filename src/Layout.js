@@ -124,9 +124,9 @@ function Layout() {
         </div>
 
         {profile ? (
-          <div>
+          <div className="profile">
             <div>{profile.email}</div>
-            <button onClick={logOut}>Log out</button>
+            <button className="log" onClick={logOut}>Log out</button>
           </div>
         ) : (
           <></>
