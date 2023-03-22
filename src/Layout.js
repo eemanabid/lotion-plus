@@ -77,7 +77,9 @@ function Layout() {
     navigate(`/notes/${currentNote + 1}/edit`);
   }, [notes]);
 
-  const saveNote = (note, index) => {
+  const saveNote = async (note, index) => {
+    const { title, body, when } = note;
+    const newNote = {title, body, when, id: uuidv4()};
     note.body = note.body.replaceAll("<p><br></p>", "");
     setNotes([
       ...notes.slice(0, index),
@@ -86,6 +88,19 @@ function Layout() {
     ]);
     setCurrentNote(index);
     setEditMode(false);
+    // send the note to the backend
+    const res = await fetch("https://w5xqkohlgqyief2eka2lnypwue0bckpr.lambda-url.ca-central-1.on.aws/",
+      {
+        method: "POST",
+        headers:{
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({...newNote, email: user})
+      }
+    );
+
+    const jsonRes = await res.json();
+    console.log(jsonRes);
   };
 
   const deleteNote = (index) => {
