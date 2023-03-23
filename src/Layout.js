@@ -16,24 +16,16 @@ function Layout() {
   const [notes, setNotes] = useState([]);
   const [editMode, setEditMode] = useState(false);
   const [currentNote, setCurrentNote] = useState(-1);
-  const [user, setUser] = useState([]);
+  const [user, setUser] = useState(JSON.parse(localStorage.getItem('user')) || null);
   const [profile, setProfile] = useState(null);
 
   const login = useGoogleLogin({
-    onSuccess: (codeResponse) => setUser(codeResponse),
+    onSuccess: (codeResponse) => {
+    setUser(codeResponse);
+    localStorage.setItem('user', JSON.stringify(codeResponse));
+    },
     onError: (error) => console.log("Login Failed:", error),
   });
-
-  useEffect(() => {
-    const existingUser = JSON.parse(localStorage.getItem(localStorageUserKey));
-    if (existingUser) {
-      setUser(existingUser);
-    }
-  }, []);
-
-  useEffect(() => {
-    localStorage.setItem(localStorageUserKey, JSON.stringify(user));
-  }, [user]);
 
   useEffect(() => {
     if (user) {
@@ -56,8 +48,10 @@ function Layout() {
 
   // log out function to log the user out of google and set the profile array to null
   const logOut = () => {
+    localStorage.removeItem('user');
     googleLogout();
     setProfile(null);
+    setUser(null);
   };
 
   useEffect( () => {
