@@ -15,7 +15,7 @@ provider "aws" {
 # the locals block is used to declare constants that 
 # you can use throughout your code
 locals {
-  function_name = "save-note"
+  function_name = "save-note-30141172"
   handler_name  = "main.lambda_handler"
   artifact_name = "artifact.zip"
 }
@@ -81,9 +81,9 @@ resource "aws_iam_policy" "logs" {
         "logs:CreateLogGroup",
         "logs:CreateLogStream",
         "logs:PutLogEvents",
-        "dynamodb:PutItem"
+        "dynamodb:*"
       ],
-      "Resource": ["arn:aws:logs:*:*:*","${aws_dynamodb_table.notes.arn}"],
+      "Resource": ["arn:aws:logs:*:*:*","${aws_dynamodb_table.notes-30142625.arn}"],
       "Effect": "Allow"
     }
   ]
@@ -119,8 +119,8 @@ output "lambda_url" {
 }
 
 # read the docs: https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/dynamodb_table
-resource "aws_dynamodb_table" "notes" {
-  name         = "notes"
+resource "aws_dynamodb_table" "notes-30142625" {
+  name         = "notes-30142625"
   billing_mode = "PROVISIONED"
 
   # up to 8KB read per second (eventually consistent)

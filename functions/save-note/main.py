@@ -4,9 +4,10 @@ import json
 import boto3
 
 dynamodb_resource = boto3.resource("dynamodb")
-table = dynamodb_resource.Table("notes")
+table = dynamodb_resource.Table("notes-30142625")
 
 def lambda_handler(event, context):
+    print(event)
     body = json.loads(event["body"])
     try:
         table.put_item(Item=body)

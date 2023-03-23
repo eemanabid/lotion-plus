@@ -88,14 +88,15 @@ function Layout() {
     ]);
     setCurrentNote(index);
     setEditMode(false);
+    
     // send the note to the backend
-    const res = await fetch("https://w5xqkohlgqyief2eka2lnypwue0bckpr.lambda-url.ca-central-1.on.aws/",
+    const res = await fetch("https://et34tcnpyxh5rmedwdfcoxsmpe0rmmfa.lambda-url.ca-central-1.on.aws/",
       {
         method: "POST",
         headers:{
           "Content-Type": "application/json"
         },
-        body: JSON.stringify({...newNote, email: user})
+        body: JSON.stringify({...newNote, email: profile.email})
       }
     );
 
