@@ -7,7 +7,6 @@ import { googleLogout, useGoogleLogin } from "@react-oauth/google";
 import axios from "axios";
 
 const localStorageKey = "lotion-v1";
-const localStorageUserKey = "lotion-user";
 
 function Layout() {
   const navigate = useNavigate();
