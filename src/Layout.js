@@ -133,9 +133,6 @@ function Layout() {
   const deleteNote = async (index) => {
     const noteId = notes[index].id;
     console.log(noteId);
-    setNotes([...notes.slice(0, index), ...notes.slice(index + 1)]);
-    setCurrentNote(0);
-    setEditMode(false);
     
     const res = await fetch("https://kg7v5i6tst2l6ceikuk5ls6pwa0txkan.lambda-url.ca-central-1.on.aws/",
     {
@@ -145,6 +142,10 @@ function Layout() {
       },
       body: JSON.stringify({email: profile.email, id: noteId}),
     });
+
+    setNotes([...notes.slice(0, index), ...notes.slice(index + 1)]);
+    setCurrentNote(0);
+    setEditMode(false);
 
     const jsonRes = await res.json();
     console.log(jsonRes);
