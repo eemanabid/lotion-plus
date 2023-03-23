@@ -7,6 +7,7 @@ import { googleLogout, useGoogleLogin } from "@react-oauth/google";
 import axios from "axios";
 
 const localStorageKey = "lotion-v1";
+//get-notes url: https://akgawc3o5ic2amctv3emqemtqy0frlsc.lambda-url.ca-central-1.on.aws/
 
 function Layout() {
   const navigate = useNavigate();
@@ -48,10 +49,24 @@ function Layout() {
     setProfile(null);
   };
 
-  useEffect(() => {
+  useEffect( () => {
     const height = mainContainerRef.current.offsetHeight;
     mainContainerRef.current.style.maxHeight = `${height}px`;
     const existing = localStorage.getItem(localStorageKey);
+    
+    /*const res = await fetch("https://akgawc3o5ic2amctv3emqemtqy0frlsc.lambda-url.ca-central-1.on.aws/",
+      {
+        method: "GET",
+        headers:{
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({email: profile.email})
+      }
+    );
+
+    const jsonRes = await res.json();
+    console.log(jsonRes);*/
+
     if (existing) {
       try {
         setNotes(JSON.parse(existing));
@@ -110,7 +125,7 @@ function Layout() {
     setCurrentNote(0);
     setEditMode(false);
     
-    const res = await fetch("https://4jtjbv7xn6qhwr5hwtb5hokuri0fedul.lambda-url.ca-central-1.on.aws/",
+    const res = await fetch("https://kg7v5i6tst2l6ceikuk5ls6pwa0txkan.lambda-url.ca-central-1.on.aws/",
     {
       method: "DELETE",
       headers: {
