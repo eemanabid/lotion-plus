@@ -17,7 +17,7 @@ function Layout() {
   const [editMode, setEditMode] = useState(false);
   const [currentNote, setCurrentNote] = useState(-1);
   const [user, setUser] = useState([]);
-  const [profile, setProfile] = useState([]);
+  const [profile, setProfile] = useState(null);
 
   const login = useGoogleLogin({
     onSuccess: (codeResponse) => setUser(codeResponse),
