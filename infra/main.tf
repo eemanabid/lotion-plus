@@ -12,13 +12,7 @@ provider "aws" {
   region = "ca-central-1"
 }
 
-# the locals block is used to declare constants that 
-# you can use throughout your code
-locals {
-  function_name = "save-note-30141172"
-  handler_name  = "main.lambda_handler"
-  artifact_name = "artifact.zip"
-}
+// SAVE NOTE
 
 # create a role for the Lambda function to assume
 # every service on AWS that wants to call other AWS services should first assume a role and
@@ -26,7 +20,7 @@ locals {
 # to the service so it can interact with other AWS services
 # see the docs: https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_role
 resource "aws_iam_role" "lambda" {
-  name               = "iam-for-lambda-${local.function_name}"
+  name               = "iam-for-lambda-save-note-30141172"
   assume_role_policy = <<EOF
 {
   "Version": "2012-10-17",
@@ -45,11 +39,11 @@ EOF
 }
 
 # create archive file from main.py
-data "archive_file" "lambda" {
+data "archive_file" "save-note-archive" {
   type = "zip"
   # this file (main.py) needs to exist in the same folder as this 
   # Terraform configuration file
-  source_file = "main.py"
+  source_file = "../functions/save-note/main.py"
   output_path = "artifact.zip"
 }
 
@@ -57,10 +51,10 @@ data "archive_file" "lambda" {
 # see the docs: https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/lambda_function
 resource "aws_lambda_function" "lambda" {
   role             = aws_iam_role.lambda.arn
-  function_name    = local.function_name
-  handler          = local.handler_name
-  filename         = local.artifact_name
-  source_code_hash = data.archive_file.lambda.output_base64sha256
+  function_name    = "save-note-30141172"
+  handler          = "main.lambda_handler"
+  filename         = "artifact.zip"
+  source_code_hash = data.archive_file.save-note-archive.output_base64sha256
 
   # see all available runtimes here: https://docs.aws.amazon.com/lambda/latest/dg/API_CreateFunction.html#SSS-CreateFunction-request-Runtime
   runtime = "python3.9"
@@ -69,7 +63,7 @@ resource "aws_lambda_function" "lambda" {
 # create a policy for publishing logs to CloudWatch
 # see the docs: https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_policy
 resource "aws_iam_policy" "logs" {
-  name        = "lambda-logging-${local.function_name}"
+  name        = "lambda-logging-save-note-30141172"
   description = "IAM policy for logging from a lambda"
 
   policy = <<EOF
@@ -144,4 +138,81 @@ resource "aws_dynamodb_table" "lotion-30142625" {
     name = "id"
     type = "S"
   }
+}
+
+/***************************************************************************************************/
+// DELETE NOTE
+# create a role for the Lambda function to assume
+resource "aws_iam_role" "lambda_delete_note" {
+  name               = "iam-for-lambda-delete-note"
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Action = "sts:AssumeRole"
+        Effect = "Allow"
+        Principal = {
+          Service = "lambda.amazonaws.com"
+        }
+      }
+    ]
+  })
+}
+
+# create archive file from delete_note.py
+data "archive_file" "delete-note-archive" {
+  type = "zip"
+  source_file = "../functions/delete-note/main.py"
+  output_path = "delete_note.zip"
+}
+
+# create a Lambda function for deleting a note
+resource "aws_lambda_function" "lambda_delete_note" {
+  role             = aws_iam_role.lambda_delete_note.arn
+  function_name    = "delete-note"
+  handler          = "main.lambda_handler"
+  filename         = "delete_note.zip"
+  source_code_hash = data.archive_file.delete-note-archive.output_base64sha256
+  runtime          = "python3.9"
+}
+
+# create a policy for deleting notes from the DynamoDB table
+resource "aws_iam_policy" "dynamodb_delete_policy" {
+  name = "dynamodb-delete-policy"
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Action = "dynamodb:DeleteItem"
+        Effect = "Allow"
+        Resource = aws_dynamodb_table.lotion-30142625.arn
+      }
+    ]
+  })
+}
+
+# attach the above policy to the function role
+resource "aws_iam_role_policy_attachment" "lambda_dynamodb_delete_policy" {
+  policy_arn = aws_iam_policy.dynamodb_delete_policy.arn
+  role       = aws_iam_role.lambda_delete_note.name
+}
+
+# create a Function URL for Lambda 
+resource "aws_lambda_function_url" "delete_note_url" {
+  function_name      = aws_lambda_function.lambda_delete_note.function_name
+  authorization_type = "NONE"
+
+  cors {
+    allow_credentials = true
+    allow_origins     = ["*"]
+    allow_methods     = ["DELETE"]
+    allow_headers     = ["*"]
+    expose_headers    = ["keep-alive", "date"]
+  }
+}
+
+# show the Function URL after creation
+output "delete_note_url" {
+  value = aws_lambda_function_url.delete_note_url.function_url
 }

@@ -79,7 +79,7 @@ function Layout() {
 
   const saveNote = async (note, index) => {
     const { title, body, when } = note;
-    const newNote = {title, body, when, id: uuidv4()};
+    const newNote = {title, body, when, id: note.id};
     note.body = note.body.replaceAll("<p><br></p>", "");
     setNotes([
       ...notes.slice(0, index),
@@ -90,7 +90,7 @@ function Layout() {
     setEditMode(false);
     
     // send the note to the backend
-    const res = await fetch("https://et34tcnpyxh5rmedwdfcoxsmpe0rmmfa.lambda-url.ca-central-1.on.aws/",
+    const res = await fetch("https://r65flle5okcutzp5i6fivwyfae0olcsu.lambda-url.ca-central-1.on.aws/",
       {
         method: "POST",
         headers:{
@@ -104,10 +104,24 @@ function Layout() {
     console.log(jsonRes);
   };
 
-  const deleteNote = (index) => {
+  const deleteNote = async (index) => {
+    const noteId = notes[index].id;
+    console.log(noteId)
     setNotes([...notes.slice(0, index), ...notes.slice(index + 1)]);
     setCurrentNote(0);
     setEditMode(false);
+    
+    const res = await fetch("https://4jtjbv7xn6qhwr5hwtb5hokuri0fedul.lambda-url.ca-central-1.on.aws/",
+    {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({email: profile.email, id: noteId}),
+    });
+
+    const jsonRes = await res.json();
+    console.log(jsonRes);
   };
 
   const addNote = () => {
