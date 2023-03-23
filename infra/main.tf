@@ -83,7 +83,7 @@ resource "aws_iam_policy" "logs" {
         "logs:PutLogEvents",
         "dynamodb:*"
       ],
-      "Resource": ["arn:aws:logs:*:*:*","${aws_dynamodb_table.notes-30142625.arn}"],
+      "Resource": ["arn:aws:logs:*:*:*","${aws_dynamodb_table.lotion-30142625.arn}"],
       "Effect": "Allow"
     }
   ]
@@ -119,8 +119,8 @@ output "lambda_url" {
 }
 
 # read the docs: https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/dynamodb_table
-resource "aws_dynamodb_table" "notes-30142625" {
-  name         = "notes-30142625"
+resource "aws_dynamodb_table" "lotion-30142625" {
+  name         = "lotion-30142625"
   billing_mode = "PROVISIONED"
 
   # up to 8KB read per second (eventually consistent)
