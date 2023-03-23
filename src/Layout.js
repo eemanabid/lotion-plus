@@ -1,7 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { Outlet, useNavigate, Link } from "react-router-dom";
 import NoteList from "./NoteList";
-import Empty from "./Empty";
 import { v4 as uuidv4 } from "uuid";
 import { currentDate } from "./utils";
 import { googleLogout, useGoogleLogin } from "@react-oauth/google";
@@ -141,14 +140,15 @@ function Layout() {
 
         {profile ? (
           <div className="profile">
-            <div>{profile.email}</div>
-            <button className="log" onClick={logOut}>Log out</button>
+            <div className="email">{profile.email}
+            <button className="log" onClick={logOut}> (Log out) </button>
+            </div>
           </div>
         ) : (
           <></>
         )}
 
-        <aside>&nbsp;</aside>
+        
       </header>
       <div id="main-container" ref={mainContainerRef}>
       {profile ? (
