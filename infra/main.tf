@@ -101,7 +101,7 @@ resource "aws_lambda_function_url" "url" {
   cors {
     allow_credentials = true
     allow_origins     = ["*"]
-    allow_methods     = ["GET", "POST", "PUT", "DELETE"]
+    allow_methods     = ["POST"]
     allow_headers     = ["*"]
     expose_headers    = ["keep-alive", "date"]
   }
