@@ -7,6 +7,7 @@ import { googleLogout, useGoogleLogin } from "@react-oauth/google";
 import axios from "axios";
 
 const localStorageKey = "lotion-v1";
+const localStorageUserKey = "lotion-user";
 
 function Layout() {
   const navigate = useNavigate();
@@ -22,6 +23,17 @@ function Layout() {
     onSuccess: (codeResponse) => setUser(codeResponse),
     onError: (error) => console.log("Login Failed:", error),
   });
+
+  useEffect(() => {
+    const existingUser = JSON.parse(localStorage.getItem(localStorageUserKey));
+    if (existingUser) {
+      setUser(existingUser);
+    }
+  }, []);
+
+  useEffect(() => {
+    localStorage.setItem(localStorageUserKey, JSON.stringify(user));
+  }, [user]);
 
   useEffect(() => {
     if (user) {
@@ -78,7 +90,7 @@ function Layout() {
 
   const saveNote = async (note, index) => {
     const { title, body, when } = note;
-    const newNote = {title, body, when, id: note.id};
+    const newNote = { title, body, when, id: note.id };
     note.body = note.body.replaceAll("<p><br></p>", "");
     setNotes([
       ...notes.slice(0, index),
@@ -87,15 +99,16 @@ function Layout() {
     ]);
     setCurrentNote(index);
     setEditMode(false);
-    
+
     // send the note to the backend
-    const res = await fetch("https://r65flle5okcutzp5i6fivwyfae0olcsu.lambda-url.ca-central-1.on.aws/",
+    const res = await fetch(
+      "https://r65flle5okcutzp5i6fivwyfae0olcsu.lambda-url.ca-central-1.on.aws/",
       {
         method: "POST",
-        headers:{
-          "Content-Type": "application/json"
+        headers: {
+          "Content-Type": "application/json",
         },
-        body: JSON.stringify({...newNote, email: profile.email})
+        body: JSON.stringify({ ...newNote, email: profile.email }),
       }
     );
 
@@ -105,19 +118,21 @@ function Layout() {
 
   const deleteNote = async (index) => {
     const noteId = notes[index].id;
-    console.log(noteId)
+    console.log(noteId);
     setNotes([...notes.slice(0, index), ...notes.slice(index + 1)]);
     setCurrentNote(0);
     setEditMode(false);
-    
-    const res = await fetch("https://4jtjbv7xn6qhwr5hwtb5hokuri0fedul.lambda-url.ca-central-1.on.aws/",
-    {
-      method: "DELETE",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({email: profile.email, id: noteId}),
-    });
+
+    const res = await fetch(
+      "https://4jtjbv7xn6qhwr5hwtb5hokuri0fedul.lambda-url.ca-central-1.on.aws/",
+      {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email: profile.email, id: noteId }),
+      }
+    );
 
     const jsonRes = await res.json();
     console.log(jsonRes);
@@ -154,45 +169,47 @@ function Layout() {
 
         {profile ? (
           <div className="profile">
-            <div className="email">{profile.email}
-            <button className="log" onClick={logOut}> (Log out) </button>
+            <div className="email">
+              {profile.email}
+              <button className="log" onClick={logOut}>
+                {" "}
+                (Log out){" "}
+              </button>
             </div>
           </div>
         ) : (
-          <></>
+          <aside>&nbsp;</aside>
         )}
-
-        
       </header>
       <div id="main-container" ref={mainContainerRef}>
-      {profile ? (
-         <aside id="sidebar" className={collapse ? "hidden" : null}>
-         <header>
-           <div id="notes-list-heading">
-             <h2>Notes</h2>
-             <button id="new-note-button" onClick={addNote}>
-               +
-             </button>
-           </div>
-         </header>
-         <div id="notes-holder">
-           <NoteList notes={notes} />
-         </div>
-       </aside>
+        {profile ? (
+          <aside id="sidebar" className={collapse ? "hidden" : null}>
+            <header>
+              <div id="notes-list-heading">
+                <h2>Notes</h2>
+                <button id="new-note-button" onClick={addNote}>
+                  +
+                </button>
+              </div>
+            </header>
+            <div id="notes-holder">
+              <NoteList notes={notes} />
+            </div>
+          </aside>
         ) : (
           <></>
         )}
 
         <div id="write-box">
-        {profile ? (
-         <Outlet context={[notes, saveNote, deleteNote]} />
-        ) : (
-          
-          <div id="login-button-div"> 
-            <button id="login-button" onClick={() => login()}>Sign in with Google </button> 
+          {profile ? (
+            <Outlet context={[notes, saveNote, deleteNote]} />
+          ) : (
+            <div id="login-button-div">
+              <button id="login-button" onClick={() => login()}>
+                Sign in with Google{" "}
+              </button>
             </div>
-        )}
-          
+          )}
         </div>
       </div>
     </div>
