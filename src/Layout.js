@@ -127,7 +127,7 @@ function Layout() {
     const noteId = notes[index].id;
     console.log(noteId);
     
-    const res = await fetch("https://kg7v5i6tst2l6ceikuk5ls6pwa0txkan.lambda-url.ca-central-1.on.aws/",
+    const res = await fetch(`https://kg7v5i6tst2l6ceikuk5ls6pwa0txkan.lambda-url.ca-central-1.on.aws?email=${profile.email}&id=${noteId}`,
     {
       method: "DELETE",
       headers: {

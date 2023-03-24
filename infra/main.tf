@@ -187,7 +187,14 @@ resource "aws_iam_policy" "dynamodb_delete_policy" {
         Action = "dynamodb:DeleteItem"
         Effect = "Allow"
         Resource = aws_dynamodb_table.lotion-30142625.arn
-      }
+      },
+      {
+        Action = ["logs:CreateLogGroup",
+        "logs:CreateLogStream",
+        "logs:PutLogEvents"]
+        Effect = "Allow"
+        Resource = "arn:aws:logs:*:*:*"
+      },
     ]
   })
 }

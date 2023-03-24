@@ -4,8 +4,8 @@ dynamodb_resource = boto3.resource("dynamodb")
 table = dynamodb_resource.Table("lotion-30142625")
 
 def lambda_handler(event, context):
-    email = event["email"]
-    id = event["id"]
+    email = event["queryStringParameters"]["email"]
+    id = event["queryStringParameters"]["id"]
     response = table.delete_item(
         Key={
             "email": email,
@@ -14,3 +14,7 @@ def lambda_handler(event, context):
     )
     status_code = response['ResponseMetadata']['HTTPStatusCode']
     print(status_code)
+    return {
+        "statusCode": 200,
+        "body": "success"
+    }
