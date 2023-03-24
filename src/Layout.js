@@ -53,39 +53,38 @@ function Layout() {
     setUser(null);
   };
 
-  useEffect( () => {
+  useEffect(() => {
     const height = mainContainerRef.current.offsetHeight;
     mainContainerRef.current.style.maxHeight = `${height}px`;
-    const existing = localStorage.getItem(localStorageKey);
-    
-    /*const res = await fetch("https://akgawc3o5ic2amctv3emqemtqy0frlsc.lambda-url.ca-central-1.on.aws/",
-      {
+  
+    if (!profile) {
+      return;
+    }
+
+    async function get_notes(){
+      const res = await fetch(`https://akgawc3o5ic2amctv3emqemtqy0frlsc.lambda-url.ca-central-1.on.aws?email=${profile.email}`, {
         method: "GET",
-        headers:{
-          "Content-Type": "application/json"
+        headers: {
+          "Content-Type": "application/json",
         },
-        body: JSON.stringify({email: profile.email})
-      }
-    );
+      });
 
-    const jsonRes = await res.json();
-    console.log(jsonRes);*/
-
-    if (existing) {
-      try {
-        setNotes(JSON.parse(existing));
-      } catch {
-        setNotes([]);
+    
+      const jsonRes = await res.json();
+      console.log(jsonRes);
+    
+      if (jsonRes && jsonRes.length != null) {
+        setNotes(jsonRes);
+      } else if (!notes.length) { 
+        setNotes([]); // set notes to empty array
       }
     }
-  }, []);
-
-  useEffect(() => {
-    localStorage.setItem(localStorageKey, JSON.stringify(notes));
-  }, [notes]);
+    get_notes();
+  }, [profile]);
 
   useEffect(() => {
     if (currentNote < 0) {
+      navigate(`/notes`);
       return;
     }
     if (!editMode) {

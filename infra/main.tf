@@ -268,10 +268,17 @@ resource "aws_iam_policy" "dynamodb_get_policy" {
     Version = "2012-10-17"
     Statement = [
       {
-        Action = "dynamodb:GetItems"
+        Action = "dynamodb:Query"
         Effect = "Allow"
         Resource = aws_dynamodb_table.lotion-30142625.arn
-      }
+      },
+      {
+        Action = ["logs:CreateLogGroup",
+        "logs:CreateLogStream",
+        "logs:PutLogEvents"]
+        Effect = "Allow"
+        Resource = "arn:aws:logs:*:*:*"
+      },
     ]
   })
 }
