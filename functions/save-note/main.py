@@ -7,7 +7,6 @@ dynamodb_resource = boto3.resource("dynamodb")
 table = dynamodb_resource.Table("lotion-30142625")
 
 def lambda_handler(event, context):
-    print(event)
     body = json.loads(event["body"])
     try:
         table.put_item(Item=body)
@@ -20,7 +19,7 @@ def lambda_handler(event, context):
     except Exception as exp:
         print(f"exception: {exp}")
         return {
-            "statusCode": 500,
+            "statusCode": 401,
                 "body": json.dumps({
                     "message": str(exp)
             })
