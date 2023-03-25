@@ -66,6 +66,7 @@ function Layout() {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
+          Authorization: `Bearer ${user.access_token}`
         },
       });
 
@@ -112,6 +113,7 @@ function Layout() {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          Authorization: `Bearer ${user.access_token}`
         },
         body: JSON.stringify({ ...newNote, email: profile.email }),
       }
@@ -129,6 +131,7 @@ function Layout() {
       method: "DELETE",
       headers: {
         "Content-Type": "application/json",
+        Authorization: `Bearer ${user.access_token}`
       },
       body: JSON.stringify({email: profile.email, id: noteId}),
     });
